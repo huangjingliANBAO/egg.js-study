@@ -16,7 +16,7 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1603250688892_7806';
 
   // add your middleware config here
-  config.middleware = ["errorHandler"];
+  config.middleware = ["errorHandler","auth"];
 
   // add your user config here
   const userConfig = {
@@ -77,6 +77,10 @@ module.exports = appInfo => {
   config.jwt = {
     secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
   };
+  //这些断点的请求需要token鉴权
+  config.auth = {
+    match:['/logout','/upload','getSize','/file','share']
+  }
 
   return {
     ...config,
