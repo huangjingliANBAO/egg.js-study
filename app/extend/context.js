@@ -1,4 +1,5 @@
 // app/extend/context.js
+'use strict';
 module.exports = {
     // 成功提示
     apiSuccess(data = '', msg = 'ok', code = 200) {

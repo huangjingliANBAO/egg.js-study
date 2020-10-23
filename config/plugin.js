@@ -18,5 +18,9 @@ valparams: {
   enable: true,
   package: 'egg-valparams',
 },
+redis: {
+  enable: true,
+  package: 'egg-redis',
+}
 };
 

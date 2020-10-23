@@ -8,5 +8,5 @@ module.exports = (app) => {
   router.get("/", controller.home.index);
   router.get("/list", controller.home.list);
   // 用户注册
-  router.post("/reg", controller.user.reg);
+   router.post("/reg", controller.user.reg);
 };
