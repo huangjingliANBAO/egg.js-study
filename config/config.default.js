@@ -16,7 +16,7 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1603250688892_7806';
 
   // add your middleware config here
-  config.middleware = ["errorHandler","auth",'token'];
+  config.middleware = ["errorHandler","auth"];
 
   // add your user config here
   const userConfig = {
