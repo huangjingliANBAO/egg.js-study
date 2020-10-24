@@ -27,9 +27,19 @@ class UserController extends Controller {
         type: 'string',
         desc: '确认密码',
       },
+      used_size: {
+        required: true,
+        type: INTEGER,
+        desc: '网盘已使用大小，单位:kb',
+      },
+      total_size: {
+        required: true,
+        type: INTEGER,
+        desc: '网盘大小，单位:kb',
+      }
     });
 
-    const { username, password, repassword } = ctx.request.body;
+    const { username, password, repassword,used_size,total_size } = ctx.request.body;
 
     if (password !== repassword) {
       return ctx.throw(400, '密码和确认密码不相同');
@@ -124,6 +134,15 @@ class UserController extends Controller {
       this.ctx.throw(400, '密码错误');
     }
     return true;
+  }
+  //剩余容量
+  async getSize(){
+    const {ctx,service} = this
+    return ctx.apiSuccess({
+      used_size: ctx.user.used_size,
+      total_size: ctx.user.total_size,
+    
+    })
   }
 }
 
