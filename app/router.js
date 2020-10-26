@@ -3,6 +3,7 @@
 /**
  * @param {Egg.Application} app - egg application
  */
+
 module.exports = (app) => {
   const { router, controller } = app;
   router.get("/", controller.home.index);
@@ -16,7 +17,7 @@ module.exports = (app) => {
    //上传文件到oss
    router.post('/upload', controller.file.upload);
    //剩余容量
-   router.get('/getsize', controller.user.getSize)
+   router.get('/getSize', controller.user.getSize);
    //文件列表查询
    router.get('/file', controller.file.list);
    //创建文件夹

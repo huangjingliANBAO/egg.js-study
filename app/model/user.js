@@ -71,7 +71,7 @@ module.exports = (app) => {
     },
     used_size: {
       type: INTEGER,
-      defaultValue: 0,
+      defaultValue: 4,
       comment: "网盘已使用大小，单位:kb",
     },
     created_time: DATE,

@@ -1,5 +1,3 @@
-/* eslint valid-jsdoc: "off" */
-
 'use strict';
 
 /**
@@ -13,15 +11,20 @@ module.exports = appInfo => {
   const config = exports = {};
 
   // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_1603250688892_7806';
+  config.keys = appInfo.name + '_1603285260933_9322';
 
   // add your middleware config here
-  config.middleware = ["errorHandler","auth"];
+  config.middleware = [ 'errorHandler', 'auth' ];
 
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
   };
+
+  config.auth = {
+    match: [ '/logout', '/upload', '/getSize', '/file', '/share' ],
+  };
+
   config.security = {
     // 关闭 csrf
     csrf: {
@@ -30,15 +33,16 @@ module.exports = appInfo => {
     // 跨域白名单
     domainWhiteList: [ 'http://localhost:3000' ],
   };
-   // 允许跨域的方法
+  // 允许跨域的方法
   config.cors = {
     origin: '*',
-    allowMethods: 'GET, PUT, POST, DELETE, PATCH'
+    allowMethods: 'GET, PUT, POST, DELETE, PATCH',
   };
+
   config.sequelize = {
     dialect: 'mysql',
     host: '127.0.0.1',
-    username: "root",
+    username: 'root',
     password: 'root',
     port: 3306,
     database: 'test_egg',
@@ -55,18 +59,20 @@ module.exports = appInfo => {
       updatedAt: 'updated_time',
       // deletedAt: 'deleted_time',
       // 所有驼峰命名格式化
-      underscored: true
-    }
+      underscored: true,
+    },
   };
+
   config.valparams = {
-    locale:'zh-cn',
-    throwError:true,
+    locale: 'zh-cn',
+    throwError: true,
   };
+
   config.crypto = {
-    secret:  'qhdgw@45ncashdaksh2!#@3nxjdas*_672'
+    secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
   };
-   // redis存储
-   config.redis = {
+  // redis存储
+  config.redis = {
     client: {
       port: 6379, // Redis port
       host: '127.0.0.1', // Redis host
@@ -74,20 +80,18 @@ module.exports = appInfo => {
       db: 1,
     },
   };
+
   config.jwt = {
     secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
   };
-  //这些断点的请求需要token鉴权
-  config.auth = {
-    match:['/logout','/upload','getSize','/file','share']
-  };
+
   // oss配置
   config.oss = {
     client: {
       accessKeyId: 'LTAI4LpNXLeoyFvu',
       accessKeySecret: 'cNGVSkiEkHqEO0EaX7tIpFgG4qfWNg',
-      bucket: 'xijie1',
-      endpoint: 'oss-cn-beijing.aliyuncs.com',
+      bucket: 'egg-oss-yh',
+      endpoint: 'oss-cn-shanghai.aliyuncs.com',
       timeout: '60s',
     },
   };
@@ -135,11 +139,10 @@ module.exports = appInfo => {
       '.mp4',
       '.avi',
     ],
-  }
+  };
 
   return {
     ...config,
     ...userConfig,
   };
 };
-

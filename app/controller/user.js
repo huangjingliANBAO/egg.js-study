@@ -115,6 +115,14 @@ class UserController extends Controller {
     }
     ctx.apiSuccess('退出登录成功');
   }
+   // 剩余容量
+   async getSize() {
+    const { ctx, service } = this;
+    return ctx.apiSuccess({
+      total_size: ctx.authUser.total_size,
+      used_size: ctx.authUser.used_size,
+    });
+  }
 
   // 验证密码
   checkPassword(password, hash_password) {
@@ -125,30 +133,7 @@ class UserController extends Controller {
     }
     return true;
   }
-  //剩余容量
-  async getSize(){
-    const {ctx,service} = this
-    ctx.validate({
-      used_size:{
-        required:true,
-        type:'int',
-        defaultValue:4,
-        desc:'网盘已使用大小',
-      },
-       total_size:{
-        required:true,
-        type:'int',
-        defaultValue:10485760,
-        desc:'网盘大小',
-      }
-    })
-    const {used_size,total_size} = ctx.query
-    return ctx.validate({
-      used_size: ctx.authUser.used_size,
-      total_size: ctx.authUser.total_size,
-    
-    })
-  }
+  
 }
 
 module.exports = UserController;

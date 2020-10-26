@@ -25,21 +25,25 @@ class FileController extends Controller {
         desc: '目录id',
       },
     })
-
-    const file_id = ctx.query.file_id
-    console.log(file_id + '<<<<<<<<<<')
-    // 目录id是否存在
-    if (file_id > 0) {
-      // 目录是否存在
-      await service.file.isDirExist(file_id)
-    }
     //取得上传的文件
     const file = ctx.request.files[0]
+    const file_id = ctx.query.file_id
+    console.log(file_id + '<<<<<<<<<<')
+    //处理上传非目录的情况
+    let prefixPath = '0'
 
+    if (file_id > 0) {
+     prefixPath = await service.file.seachDir(file_id)
+     console.log(prefixPath)
+    }
 
-    // 根据file_id一直向上找到顶层目录
-    const prefixPath = await service.file.seachDir(file_id)
-    console.log(prefixPath);
+    //处理上传跟目录的情况
+    if(file_id === 0){
+      prefixPath = '/'
+    }
+
+ 
+    
     // 拼接出最终文件上传目录
     const name = prefixPath + ctx.genID(10) + path.extname(file.filename)
 
@@ -75,7 +79,7 @@ class FileController extends Controller {
         user_id: currentUser.id,
         size: parseInt(s),
         isdir: 0,
-        url: result.url,
+        url: result.url.replace('http','https'),
       }
       let res = await app.model.File.create(addData)
 
@@ -88,47 +92,47 @@ class FileController extends Controller {
 
     ctx.apiFail('上传失败')
   }
-  async list(){
-    const {ctx,app} = this
+  async list() {
+    const { ctx, app } = this
     const user_id = ctx.authUser.id
     ctx.validate({
-      file_id:{
-        required:true,
-        type:'int',
-        defValue:0,
-        desc:'目录id',
+      file_id: {
+        required: true,
+        type: 'int',
+        defValue: 0,
+        desc: '目录id',
       },
-      orderby:{
-        required:false,
-        type:'string',
-        defValue:'name',
-        range:{
-          in:['name','created_time'],
+      orderby: {
+        required: false,
+        type: 'string',
+        defValue: 'name',
+        range: {
+          in: ['name', 'created_time'],
         },
-        desc:'排序',
+        desc: '排序',
       },
-      type:{
-        required:false,
-        type:'string',
-        desc:'类型',
+      type: {
+        required: false,
+        type: 'string',
+        desc: '类型',
       },
     })
-    const {file_id,orderby,type} = ctx.query
+    const { file_id, orderby, type } = ctx.query
     let where = {
       user_id,
       file_id,
     }
-    if (type && type !== 'all'){
+    if (type && type !== 'all') {
       const Op = app.Sequelize.Op
       where.ext = {
-        [Op.like]:type + '%',
+        [Op.like]: type + '%',
       }
     }
     let rows = await app.model.File.findAll({
       where,
-      order:[
-        ['isdir','desc'],
-        [orderby,'desc'],
+      order: [
+        ['isdir', 'desc'],
+        [orderby, 'desc'],
       ],
     })
     ctx.apiSuccess({
@@ -136,63 +140,63 @@ class FileController extends Controller {
     })
   }
   //创建文件夹
-  async createdir(){
+  async createdir() {
     const {
-      ctx,app
+      ctx, app
     } = this
     const user_id = ctx.authUser.id
     ctx.validate({
-      file_id:{
-        required:true,
-        type:'int',
-        defValue:0,
-        desc:'目录id',
+      file_id: {
+        required: true,
+        type: 'int',
+        defValue: 0,
+        desc: '目录id',
       },
-      name:{
-        required:true,
-        type:'string',
-        desc:'文件夹名称',
+      name: {
+        required: true,
+        type: 'string',
+        desc: '文件夹名称',
       },
     })
-    let {file_id,name} = ctx.request.body
+    let { file_id, name } = ctx.request.body
     //验证目录id是否存在
-    if(file_id){
+    if (file_id) {
       await this.service.file.isDirExist(file_id)
     }
     let res = await app.model.File.create({
       name,
       file_id,
       user_id,
-      isdir:1,
-      size:0,
+      isdir: 1,
+      size: 0,
     })
     ctx.apiSuccess(res)
   }
   //重命名
-  async rename(){
-    const {ctx,app} = this
+  async rename() {
+    const { ctx, app } = this
     const user_id = ctx.authUser.id
     ctx.validate({
-      id:{
-        required:true,
-        type:'int',
-        desc:'记录',
+      id: {
+        required: true,
+        type: 'int',
+        desc: '记录',
       },
-      file_id:{
-        required:true,
-        type:'int',
-        defValue:0,
-        desc:'目录id',
+      file_id: {
+        required: true,
+        type: 'int',
+        defValue: 0,
+        desc: '目录id',
       },
-      name:{
-        required:true,
-        type:'string',
-        desc:'文件名称',
+      name: {
+        required: true,
+        type: 'string',
+        desc: '文件名称',
       }
     })
-    let {id,file_id,name} = ctx.request.body
+    let { id, file_id, name } = ctx.request.body
     //验证目录id是否存在
-    if(file_id > 0){
+    if (file_id > 0) {
       await this.service.file.isDirExist(file_id)
     }
     //文件是否存在
@@ -201,22 +205,22 @@ class FileController extends Controller {
     let res = await f.save()
     ctx.apiSuccess(res)
   }
-  async delete(){
-    const {ctx,app} = this;
+  async delete() {
+    const { ctx, app } = this;
     const user_id = ctx.authUser.id;
     ctx.validate({
-      isd:{
-        required:true,
-        type:'string',
-        desc:'记录'
+      isd: {
+        required: true,
+        type: 'string',
+        desc: '记录'
       }
     });
-    let {ids} = ctx.request.body;
+    let { ids } = ctx.request.body;
     ids = ids.split(',');
     //计算删除文件内存
     let files = await app.model.File.findAll({
-      where:{
-        id:ids,
+      where: {
+        id: ids,
         user_id
       }
     });
@@ -225,37 +229,37 @@ class FileController extends Controller {
       size = size + item.size
     });
     let res = await app.model.File.destroy({
-      where:{
-        id:ids,
+      where: {
+        id: ids,
         user_id
       }
     });
-    if(res) {
+    if (res) {
       //减去使用内存
       size = ctx.authUser.used_size - size;
-      ctx.authUser.used_size = size > 0? size :0;
+      ctx.authUser.used_size = size > 0 ? size : 0;
       ctx.authUser.save();
     }
     ctx.apiSuccess(res);
   }
-  async search(){
-    const {ctx,app} = this;
+  async search() {
+    const { ctx, app } = this;
     const user_id = ctx.authUser.id;
     ctx.validate({
-      keyword:{
-        required:true,
-        type:'string',
-        desc:'关键字'
+      keyword: {
+        required: true,
+        type: 'string',
+        desc: '关键字'
       },
     })
-    let {keyword} = ctx.query
+    let { keyword } = ctx.query
     const Op = app.Sequelize.Op
     let rows = await app.model.File.findAll({
-      where:{
-        name:{
-          [Op.like]:`%${keyword}%`
+      where: {
+        name: {
+          [Op.like]: `%${keyword}%`
         },
-        isdir:0,
+        isdir: 0,
         user_id
       }
     })
